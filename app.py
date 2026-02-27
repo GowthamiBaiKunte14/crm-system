@@ -87,7 +87,7 @@ def send_bulk_whatsapp():
 # APP CONFIG
 # ========================
 app = Flask(__name__)
-app.secret_key = "SECRET_KEY"
+app.secret_key = os.getenv("SECRET_KEY")
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(basedir, "crm.db")
