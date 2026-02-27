@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-4">Admin Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card shadow border-0">
+            <div class="card-body">
+                <h6>Total Leads</h6>
+                <h2 class="text-primary">{{ total_leads }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow border-0">
+            <div class="card-body">
+                <h6>Converted Leads</h6>
+                <h2 class="text-success">{{ converted_leads }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow border-0">
+            <div class="card-body">
+                <h6>Total Messages</h6>
+                <h2 class="text-info">{{ total_messages }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow border-0">
+            <div class="card-body">
+                <h6>Today Leads</h6>
+                <h2 class="text-warning">{{ today_leads }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow border-0">
+            <div class="card-body">
+
+                <h6 class="text-center">WhatsApp Campaign</h6>
+
+                <form action="/admin/send_campaign" method="POST">
+
+                    <textarea
+                        name="message"
+                        class="form-control mb-2"
+                        placeholder="Enter WhatsApp message..."
+                        required>
+                    </textarea>
+
+                    <select name="status" class="form-control mb-2">
+                        <option value="all">All Leads</option>
+                        <option value="New">New</option>
+                        <option value="Contacted">Contacted</option>
+                        <option value="Follow-up">Follow-up</option>
+                        <option value="Converted">Converted</option>
+                    </select>
+
+                    <button class="btn btn-success w-100">
+                        📲 Send WhatsApp Campaign
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Bar Chart -->
+    <div class="col-md-6">
+        <div class="card shadow p-3">
+            <h5>Employee Performance</h5>
+            <canvas id="barChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="col-md-6">
+        <div class="card shadow p-3">
+            <h5>Lead Status Distribution</h5>
+            <canvas id="pieChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<h4>Pending Approvals</h4>
+<ul class="list-group">
+    {% for emp in employees %}
+    <li class="list-group-item d-flex justify-content-between">
+        {{ emp.name }} ({{ emp.email }})
+        <a class="btn btn-sm btn-success" href="/approve/{{ emp.id }}">Approve</a>
+    </li>
+    {% else %}
+    <li class="list-group-item">No pending employees.</li>
+    {% endfor %}
+</ul>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Bar Chart
+    const barCtx = document.getElementById('barChart');
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ emp_names|tojson }},
+            datasets: [{
+                label: 'Conversions',
+                data: {{ emp_counts|tojson }},
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        }
+    });
+
+    // Pie Chart
+    const pieCtx = document.getElementById('pieChart');
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ statuses|tojson }},
+            datasets: [{
+                data: {{ status_counts|tojson }},
+                backgroundColor: [
+                    '#0d6efd',
+                    '#ffc107',
+                    '#6c757d',
+                    '#198754',
+                    '#dc3545'
+                ]
+            }]
+        }
+    });
+</script>
+
+{% endblock %}
+
+
+
+
+
+

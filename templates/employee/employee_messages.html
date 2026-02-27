@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Message Logs</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Lead ID</th>
+            <th>Message</th>
+            <th>Status</th>
+            <th>Sent At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.lead_id }}</td>
+            <td>{{ log.message }}</td>
+            <td>{{ log.status }}</td>
+            <td>{{ log.sent_at }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}
+

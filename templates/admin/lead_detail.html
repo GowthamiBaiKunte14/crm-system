@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Lead Details</h2>
+
+<div class="card p-4 shadow-sm mb-3">
+    <h4>{{ lead.name }}</h4>
+    <p><strong>Phone:</strong> {{ lead.phone }}</p>
+    <p><strong>Status:</strong> {{ lead.status }}</p>
+    <p><strong>Assigned To:</strong> {{ lead.assigned_to }}</p>
+
+    <p>
+        <strong>Follow-up Date:</strong>
+        {{ lead.follow_up_date if lead.follow_up_date else "Not set" }}
+    </p>
+</div>
+
+<div class="card p-4 shadow-sm mb-3">
+    <h5>Set Follow-up Date</h5>
+    <form method="POST" action="/lead/{{ lead.id }}/followup">
+        <input type="date" name="follow_up_date" class="form-control mb-2">
+        <button class="btn btn-warning">Set Follow-up</button>
+    </form>
+</div>
+
+<div class="card p-4 shadow-sm">
+    <h5>Notes</h5>
+    <form method="POST" action="/lead/{{ lead.id }}">
+        <textarea name="notes" class="form-control mb-2" rows="4">
+{{ lead.notes or "" }}
+        </textarea>
+        <button class="btn btn-primary">Save Notes</button>
+    </form>
+</div>
+
+{% endblock %}
+

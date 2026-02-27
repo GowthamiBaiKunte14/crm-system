@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Employee Dashboard</h2>
+
+<div class="card p-4 shadow-sm">
+    <h4>Today's Follow-ups</h4>
+
+    {% if followups %}
+        <ul class="list-group">
+            {% for lead in followups %}
+            <li class="list-group-item d-flex justify-content-between">
+                {{ lead.name }} ({{ lead.phone }})
+                <a href="/lead/{{ lead.id }}" class="btn btn-sm btn-primary">
+                    Open
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No follow-ups for today.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

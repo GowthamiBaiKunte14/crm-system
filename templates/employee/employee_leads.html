@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>My Leads</h2>
+
+<!-- Bulk message form START -->
+<form method="POST" action="/employee/send_message" id="msgForm">
+
+<table class="table table-bordered table-striped shadow-sm">
+    <thead>
+        <tr>
+            <th>Select</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Update</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for lead in leads %}
+    <tr>
+        <!-- Checkbox for bulk messaging -->
+        <td>
+            <input type="checkbox" name="lead_ids" value="{{ lead.id }}">
+        </td>
+
+        <td>{{ lead.name }}</td>
+        <td>{{ lead.phone }}</td>
+        <td>
+            <span class="badge bg-dark">
+                {{ lead.platform }}
+            </span>
+        </td>
+
+        <td>
+            <select name="status_{{ lead.id }}" class="form-select">
+                <option value="New" {% if lead.status=='New' %}selected{% endif %}>New</option>
+                <option value="Contacted" {% if lead.status=='Contacted' %}selected{% endif %}>Contacted</option>
+                <option value="Follow-up" {% if lead.status=='Follow-up' %}selected{% endif %}>Follow-up</option>
+                <option value="Converted" {% if lead.status=='Converted' %}selected{% endif %}>Converted</option>
+                <option value="Lost" {% if lead.status=='Lost' %}selected{% endif %}>Lost</option>
+            </select>
+        </td>
+
+        <td>
+            <button
+                class="btn btn-sm btn-primary"
+                formaction="/employee/update_lead/{{ lead.id }}"
+                formmethod="POST">
+                Update
+            </button>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+
+</table>
+
+<!-- WhatsApp Message Section -->
+<div class="card p-3 mt-3 shadow-sm">
+    <h5>Send WhatsApp Message</h5>
+
+    <textarea
+        name="message"
+        class="form-control mb-2"
+        placeholder="Enter WhatsApp message"
+        required
+    ></textarea>
+
+    <button class="btn btn-success">
+        Send WhatsApp Message
+    </button>
+
+    <a href="/employee/messages" class="btn btn-secondary">
+        View Message Logs
+    </a>
+</div>
+
+</form>
+<!-- Bulk message form END -->
+
+{% endblock %}
+
+
+
+
+
+

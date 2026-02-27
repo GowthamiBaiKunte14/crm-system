@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Employee Performance</h2>
+
+<table class="table table-bordered shadow-sm">
+    <tr>
+        <th>Employee</th>
+        <th>Total Leads</th>
+        <th>Converted</th>
+        <th>Conversion Rate</th>
+    </tr>
+
+    {% for emp in data %}
+    <tr>
+        <td>{{ emp.name }}</td>
+        <td>{{ emp.total }}</td>
+        <td>{{ emp.converted }}</td>
+        <td>{{ emp.rate }}%</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

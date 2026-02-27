@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Employee Details</h2>
+
+<table class="table table-striped shadow-sm">
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th>Total Leads</th>
+        <th>Converted</th>
+        <th>Action</th>
+    </tr>
+
+    {% for emp in data %}
+    <tr>
+        <td>
+            <a href="/admin/employee/{{ emp.id }}">
+                {{ emp.name }}
+            </a>
+        </td>
+
+        <td>{{ emp.email }}</td>
+        <td>
+            {% if emp.approved %}
+                <span class="badge bg-success">Approved</span>
+            {% else %}
+                <span class="badge bg-warning">Pending</span>
+            {% endif %}
+        </td>
+        <td>{{ emp.total }}</td>
+        <td>{{ emp.converted }}</td>
+        <td>
+            {% if not emp.approved %}
+                <a href="/approve/{{ emp.id }}" class="btn btn-sm btn-success">
+                    Approve
+                </a>
+            {% else %}
+                <span class="text-muted">Active</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

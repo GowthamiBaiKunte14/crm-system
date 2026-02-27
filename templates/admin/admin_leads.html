@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>All Leads</h2>
+
+<!-- ================= SEARCH & FILTER ================= -->
+<div class="card p-3 mb-3 shadow-sm">
+    <form method="GET" class="row g-2">
+
+        <div class="col-md-4">
+            <input
+                type="text"
+                name="search"
+                value="{{ search }}"
+                class="form-control"
+                placeholder="Search by name or phone">
+        </div>
+
+        <div class="col-md-3">
+            <select name="status" class="form-select">
+                <option value="">All Status</option>
+                <option value="New" {% if status=='New' %}selected{% endif %}>New</option>
+                <option value="Contacted" {% if status=='Contacted' %}selected{% endif %}>Contacted</option>
+                <option value="Follow-up" {% if status=='Follow-up' %}selected{% endif %}>Follow-up</option>
+                <option value="Converted" {% if status=='Converted' %}selected{% endif %}>Converted</option>
+                <option value="Lost" {% if status=='Lost' %}selected{% endif %}>Lost</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100">Filter</button>
+        </div>
+
+        <div class="col-md-2">
+            <a href="/admin/leads" class="btn btn-secondary w-100">Reset</a>
+        </div>
+
+    </form>
+</div>
+
+<a class="btn btn-success mb-3" href="/admin/add_lead">
+    Add New Lead
+</a>
+
+<!-- ================= BULK ACTION FORM ================= -->
+<form method="POST" class="card p-3 shadow-sm">
+
+    <div class="row mb-3">
+
+        <!-- Assign Dropdown -->
+        <div class="col-md-4">
+            <select name="employee_id" class="form-select">
+                <option value="">Assign selected leads to...</option>
+                {% for emp in employees %}
+                    <option value="{{ emp.id }}">{{ emp.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Assign Button -->
+        <div class="col-md-2">
+            <button
+                class="btn btn-primary w-100"
+                formaction="/admin/assign_leads">
+                Assign
+            </button>
+        </div>
+
+        <!-- Bulk Delete -->
+        <div class="col-md-3">
+            <button
+                class="btn btn-danger w-100"
+                formaction="/admin/delete_selected"
+                onclick="return confirm('Delete selected leads?')">
+                Delete Selected
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ================= LEADS TABLE ================= -->
+    <table class="table table-striped table-bordered">
+
+        <thead class="table-dark">
+            <tr>
+                <th>
+                    <input type="checkbox" onclick="toggleAll(this)">
+                </th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th>Source</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for lead in leads %}
+            <tr>
+
+                <!-- Checkbox -->
+                <td>
+                    <input type="checkbox"
+                           name="lead_ids"
+                           value="{{ lead.id }}">
+                </td>
+
+                <!-- Name -->
+                <td>
+                    <a href="/lead/{{ lead.id }}">
+                        {{ lead.name }}
+                    </a>
+                </td>
+
+                <!-- Phone -->
+                <td>{{ lead.phone }}</td>
+
+                <!-- Status -->
+                <td>
+                    <span class="badge bg-info">
+                        {{ lead.status }}
+                    </span>
+                </td>
+
+                <!-- Assigned -->
+                <td>
+                    {% for emp in employees %}
+                        {% if emp.id == lead.assigned_to %}
+                            {{ emp.name }}
+                        {% endif %}
+                    {% endfor %}
+                </td>
+
+                <!-- Source -->
+                <td>{{ lead.source }}</td>
+
+                <!-- Delete -->
+                <td>
+                    <a href="/admin/delete_lead/{{ lead.id }}"
+                       class="btn btn-sm btn-danger"
+                       onclick="return confirm('Delete this lead?')">
+                        Delete
+                    </a>
+                </td>
+
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
+</form>
+
+<!-- ================= SELECT ALL SCRIPT ================= -->
+<script>
+function toggleAll(source) {
+    checkboxes = document.getElementsByName('lead_ids');
+    for(let i=0;i<checkboxes.length;i++){
+        checkboxes[i].checked = source.checked;
+    }
+}
+</script>
+
+{% endblock %}

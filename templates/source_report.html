@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Lead Source Report</h2>
+
+<table class="table table-bordered shadow-sm">
+    <tr>
+        <th>Source</th>
+        <th>Total Leads</th>
+    </tr>
+
+    {% for item in report %}
+    <tr>
+        <td>{{ item.source }}</td>
+        <td>{{ item.count }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

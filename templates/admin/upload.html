@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Upload Leads</h2>
+
+<div class="card p-4 shadow-sm" style="max-width:500px;">
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label>Select Excel File</label>
+            <input type="file" name="file" class="form-control" required>
+        </div>
+
+        <button class="btn btn-primary">Upload</button>
+    </form>
+</div>
+
+{% endblock %}
+

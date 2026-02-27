@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Add Lead</h2>
+
+<div class="card p-4 shadow-sm" style="max-width:500px;">
+    <form method="POST">
+        <div class="mb-3">
+            <label>Lead Name</label>
+            <input name="name" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Phone</label>
+            <input name="phone" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Lead Source</label>
+            <select name="source" class="form-select">
+                <option value="Manual">Manual</option>
+                <option value="Excel">Excel</option>
+                <option value="Facebook">Facebook</option>
+                <option value="Instagram">Instagram</option>
+                <option value="WhatsApp">WhatsApp</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Assign to</label>
+
+            {% if employees %}
+                <select name="assigned_to" class="form-select" required>
+                    {% for emp in employees %}
+                        <option value="{{ emp.id }}">{{ emp.name }}</option>
+                    {% endfor %}
+                </select>
+            {% else %}
+                <div class="alert alert-warning">
+                    No approved employees available. Please approve an employee first.
+                </div>
+            {% endif %}
+        </div>
+
+
+        <button class="btn btn-success">Add Lead</button>
+    </form>
+</div>
+
+{% endblock %}
+

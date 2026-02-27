@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Employee Profile</h2>
+
+<div class="card p-4 shadow-sm mb-4">
+    <h4>{{ emp.name }}</h4>
+    <p><strong>Email:</strong> {{ emp.email }}</p>
+    <p>
+        <strong>Status:</strong>
+        {% if emp.is_approved %}
+            <span class="badge bg-success">Approved</span>
+        {% else %}
+            <span class="badge bg-warning">Pending</span>
+        {% endif %}
+    </p>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h6>Total Leads</h6>
+            <h3>{{ total }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h6>Converted</h6>
+            <h3 class="text-success">{{ converted }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h6>Follow-ups</h6>
+            <h3 class="text-warning">{{ followups }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h6>Conversion Rate</h6>
+            <h3 class="text-primary">{{ conversion_rate }}%</h3>
+        </div>
+    </div>
+</div>
+
+<h4>Assigned Leads</h4>
+
+<table class="table table-striped shadow-sm">
+    <tr>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Status</th>
+        <th>Follow-up</th>
+    </tr>
+
+    {% for lead in leads %}
+    <tr>
+        <td>
+            <a href="/lead/{{ lead.id }}">{{ lead.name }}</a>
+        </td>
+        <td>{{ lead.phone }}</td>
+        <td>
+            <span class="badge bg-info">{{ lead.status }}</span>
+        </td>
+        <td>
+            {{ lead.follow_up_date if lead.follow_up_date else "Not set" }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
