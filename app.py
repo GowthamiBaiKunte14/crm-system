@@ -494,7 +494,9 @@ def webhook():
         return "Verification failed"
 
     data = request.json
-    print("Incoming:", data)
+
+    print("===== FACEBOOK WEBHOOK DATA =====")
+    print(data)
 
     return "EVENT_RECEIVED", 200
 # ========================
