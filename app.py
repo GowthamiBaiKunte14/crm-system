@@ -489,14 +489,28 @@ def webhook():
     VERIFY_TOKEN = "crm_verify"
 
     if request.method == "GET":
-        if request.args.get("hub.verify_token") == VERIFY_TOKEN:
-            return request.args.get("hub.challenge")
+        token = request.args.get("hub.verify_token")
+        challenge = request.args.get("hub.challenge")
+
+        if token == VERIFY_TOKEN:
+            return challenge
         return "Verification failed"
 
     data = request.json
 
-    print("===== FACEBOOK WEBHOOK DATA =====")
-    print(data)
+    # Extract messaging event
+    if "entry" in data:
+        for entry in data["entry"]:
+            for messaging in entry.get("messaging", []):
+
+                psid = messaging["sender"]["id"]
+
+                message_text = ""
+                if "message" in messaging:
+                    message_text = messaging["message"].get("text", "")
+
+                print("PSID:", psid)
+                print("Message:", message_text)
 
     return "EVENT_RECEIVED", 200
 # ========================
