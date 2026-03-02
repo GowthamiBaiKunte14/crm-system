@@ -83,24 +83,26 @@ def send_bulk_whatsapp():
 
     return total_sent
 
-def send_facebook_message(psid, message):
+def send_facebook_message(psid, text):
 
     url = "https://graph.facebook.com/v19.0/me/messages"
-
-    headers = {
-        "Content-Type": "application/json"
-    }
 
     params = {
         "access_token": os.getenv("FB_PAGE_TOKEN")
     }
 
-    data = {
-        "recipient": {"id": psid},
-        "message": {"text": message}
+    headers = {
+        "Content-Type": "application/json"
     }
 
-    requests.post(url, params=params, json=data, headers=headers)
+    data = {
+        "recipient": {"id": psid},
+        "message": {"text": text}
+    }
+
+    response = requests.post(url, params=params, json=data, headers=headers)
+
+    print("FB Send Response:", response.text)
 
 def send_bulk_facebook(message):
 
@@ -571,6 +573,8 @@ def webhook():
 
                         print("PSID:", sender_id)
                         print("Message:", message_text)
+
+                        send_facebook_message(sender_id, "Thank you for messaging us. We will contact you soon.")
 
                         save_psid(sender_id)
 
