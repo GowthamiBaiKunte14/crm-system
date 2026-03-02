@@ -540,45 +540,46 @@ def employee_messages():
 # ===============================
 from flask import request
 
-VERIFY_TOKEN = "12345"   # same token you entered in Meta
+VERIFY_TOKEN = "12345"   # same token you enter in Meta
 
-@app.route("/webhook", methods=["GET"])
-def verify_webhook():
-
-    mode = request.args.get("hub.mode")
-    token = request.args.get("hub.verify_token")
-    challenge = request.args.get("hub.challenge")
-
-    if mode == "subscribe" and token == VERIFY_TOKEN:
-        print("Webhook Verified ✅")
-        return challenge, 200
-    else:
-        return "Verification failed", 403
-
-
-# ===============================
-# RECEIVE FACEBOOK MESSAGES (POST)
-# ===============================
-@app.route("/webhook", methods=["POST"])
+@app.route("/webhook", methods=["GET", "POST"])
 def webhook():
 
-    data = request.get_json()
+    # =========================
+    # STEP A — FACEBOOK VERIFY
+    # =========================
+    if request.method == "GET":
 
-    if data["object"] == "page":
-        for entry in data["entry"]:
-            for messaging_event in entry["messaging"]:
+        mode = request.args.get("hub.mode")
+        token = request.args.get("hub.verify_token")
+        challenge = request.args.get("hub.challenge")
 
-                sender_id = messaging_event["sender"]["id"]
+        if mode == "subscribe" and token == VERIFY_TOKEN:
+            print("Webhook VERIFIED ✅")
+            return challenge, 200
+        else:
+            return "Verification failed", 403
 
-                if "message" in messaging_event:
-                    message_text = messaging_event["message"].get("text")
+    # =========================
+    # STEP B — RECEIVE MESSAGES
+    # =========================
+    if request.method == "POST":
 
-                    print("PSID:", sender_id)
-                    print("Message:", message_text)
+        data = request.get_json()
 
-                    save_psid(sender_id)
+        if data["object"] == "page":
+            for entry in data["entry"]:
+                for messaging_event in entry["messaging"]:
 
-    return "ok", 200
+                    sender_id = messaging_event["sender"]["id"]
+
+                    if "message" in messaging_event:
+                        message_text = messaging_event["message"].get("text")
+
+                        print("PSID:", sender_id)
+                        print("Message:", message_text)
+
+        return "ok", 200
 # ========================
 # ADMIN LEADS
 # ========================
