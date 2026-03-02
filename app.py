@@ -538,33 +538,26 @@ def employee_messages():
 # ===============================
 # WEBHOOK VERIFICATION (GET)
 # ===============================
-from flask import request
-
-VERIFY_TOKEN = "12345"   # same token you enter in Meta
-
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
 
-    # =========================
-    # STEP A — FACEBOOK VERIFY
-    # =========================
+    # ✅ STEP 1 — META VERIFICATION
     if request.method == "GET":
+        verify_token = "12345"
 
         mode = request.args.get("hub.mode")
         token = request.args.get("hub.verify_token")
         challenge = request.args.get("hub.challenge")
 
-        if mode == "subscribe" and token == VERIFY_TOKEN:
-            print("Webhook VERIFIED ✅")
+        if mode == "subscribe" and token == verify_token:
+            print("Webhook verified ✅")
             return challenge, 200
         else:
             return "Verification failed", 403
 
-    # =========================
-    # STEP B — RECEIVE MESSAGES
-    # =========================
-    if request.method == "POST":
 
+    # ✅ STEP 2 — RECEIVE MESSAGES
+    if request.method == "POST":
         data = request.get_json()
 
         if data["object"] == "page":
@@ -578,6 +571,8 @@ def webhook():
 
                         print("PSID:", sender_id)
                         print("Message:", message_text)
+
+                        save_psid(sender_id)
 
         return "ok", 200
 # ========================
