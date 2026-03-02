@@ -8,7 +8,7 @@ from datetime import datetime, date, timezone
 from dotenv import load_dotenv
 
 load_dotenv()
-FACEBOOK_PAGE_TOKEN = os.getenv("EAATFHK5PY1wBQ6TJQNASpwZBoi3Ev8BvbBx1TS7uvxXIZB30T8zrrQBJYv9z2MQw1rJX5ZAaC75HEZChbuvTnmEJYavQ0ZCr4dZAledueQZBWZB5NO9YxNhPUqCDZB50LUoQqvmdQqFSxtenf3j39r2eBgQhUgRUaYNPL5ZA0TzeNvVZB32jyF1clRjsUpCXaZAygbbe1NR5nAZDZD")
+FACEBOOK_PAGE_TOKEN = os.getenv("FB_PAGE_TOKEN")
 
 def init_db():
     conn = sqlite3.connect("crm.db")
@@ -131,8 +131,6 @@ class MessageLog(db.Model):
     message = db.Column(db.String(500))
     status = db.Column(db.String(50))
     sent_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-FACEBOOK_PAGE_TOKEN = "EAAWM2lvTXGQBQp5GdyyiKfE7Q4wC8i4zfeTXYZBcaj0QyJQN842ZBxxcEAqAAYnRgUaoImZApZA7l1lR2ZBRHJ5QzgVfp4SqhCrQZAuWVBq8ZA9VWZAGsQIhhLxNZBrZC4pnh2KRJ2v6zoU0jJTgRTCNZBce5MVD7S4dWdIXfkUtdxw3sJoZBc8sk062yWhVjyTxA96iZAfdpdLfMsbwS1in1RvED45LnF4vPfLhyuQWUNb9zWUhEeJ6F2gZAXnM7uT0R4XAl1rh5DAN22ZCw9sFZBZAEimUyZAwsZD"
 
 def send_facebook_message(psid, message):
     url = f"https://graph.facebook.com/v19.0/me/messages?access_token={FACEBOOK_PAGE_TOKEN}"
@@ -487,7 +485,6 @@ def employee_messages():
 def webhook():
 
     VERIFY_TOKEN = "crm_verify"
-
     if request.method == "GET":
         token = request.args.get("hub.verify_token")
         challenge = request.args.get("hub.challenge")
