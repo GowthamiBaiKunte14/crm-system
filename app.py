@@ -83,6 +83,60 @@ def send_bulk_whatsapp():
 
     return total_sent
 
+def send_facebook_message(psid, message):
+
+    url = "https://graph.facebook.com/v19.0/me/messages"
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    params = {
+        "access_token": os.getenv("FB_PAGE_TOKEN")
+    }
+
+    data = {
+        "recipient": {"id": psid},
+        "message": {"text": message}
+    }
+
+    requests.post(url, params=params, json=data, headers=headers)
+
+def send_bulk_facebook(message):
+
+    conn = sqlite3.connect("crm.db")
+    cursor = conn.cursor()
+
+    users = cursor.execute(
+        "SELECT psid FROM fb_users"
+    ).fetchall()
+
+    for user in users:
+        send_facebook_message(user[0], message)
+
+    conn.close()
+
+    return len(users)
+
+def save_psid(psid):
+
+    conn = sqlite3.connect("crm.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS fb_users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            psid TEXT UNIQUE
+        )
+    """)
+
+    cursor.execute(
+        "INSERT OR IGNORE INTO fb_users (psid) VALUES (?)",
+        (psid,)
+    )
+
+    conn.commit()
+    conn.close()
 # ========================
 # APP CONFIG
 # ========================
@@ -481,35 +535,50 @@ def employee_messages():
 
     return render_template("employee/employee_messages.html", logs=logs)
 
-@app.route("/webhook", methods=["GET", "POST"])
+# ===============================
+# WEBHOOK VERIFICATION (GET)
+# ===============================
+from flask import request
+
+VERIFY_TOKEN = "12345"   # same token you entered in Meta
+
+@app.route("/webhook", methods=["GET"])
+def verify_webhook():
+
+    mode = request.args.get("hub.mode")
+    token = request.args.get("hub.verify_token")
+    challenge = request.args.get("hub.challenge")
+
+    if mode == "subscribe" and token == VERIFY_TOKEN:
+        print("Webhook Verified ✅")
+        return challenge, 200
+    else:
+        return "Verification failed", 403
+
+
+# ===============================
+# RECEIVE FACEBOOK MESSAGES (POST)
+# ===============================
+@app.route("/webhook", methods=["POST"])
 def webhook():
 
-    VERIFY_TOKEN = "crm_verify"
-    if request.method == "GET":
-        token = request.args.get("hub.verify_token")
-        challenge = request.args.get("hub.challenge")
+    data = request.get_json()
 
-        if token == VERIFY_TOKEN:
-            return challenge
-        return "Verification failed"
-
-    data = request.json
-
-    # Extract messaging event
-    if "entry" in data:
+    if data["object"] == "page":
         for entry in data["entry"]:
-            for messaging in entry.get("messaging", []):
+            for messaging_event in entry["messaging"]:
 
-                psid = messaging["sender"]["id"]
+                sender_id = messaging_event["sender"]["id"]
 
-                message_text = ""
-                if "message" in messaging:
-                    message_text = messaging["message"].get("text", "")
+                if "message" in messaging_event:
+                    message_text = messaging_event["message"].get("text")
 
-                print("PSID:", psid)
-                print("Message:", message_text)
+                    print("PSID:", sender_id)
+                    print("Message:", message_text)
 
-    return "EVENT_RECEIVED", 200
+                    save_psid(sender_id)
+
+    return "ok", 200
 # ========================
 # ADMIN LEADS
 # ========================
